@@ -6,32 +6,48 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+/**
+ * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
+ */
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture background;
     private Texture ground;
+    private float backGroundScroll;
+    private int backGround_loop_point;
+    private float groundScroll;
+    private int background_xSpeed;
+    private int ground_xSpeed;
+
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         background = new Texture("bg_night.png");
+        ground = new Texture("ground.png");
+        backGroundScroll = 0;
+        groundScroll = 0;
+        background_xSpeed = 30;
+        ground_xSpeed = 160;
+        backGround_loop_point = 313;
 
-        ground= new Texture("ground.png");
     }
 
-    public void update(){
-        
+    public void update(float delta) {
+        backGroundScroll = (backGroundScroll + background_xSpeed * delta) % 313;
+        groundScroll = (groundScroll + ground_xSpeed * delta) % backGround_loop_point;
     }
+
 
     @Override
     public void render() {
+        float delta = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        update(delta);
         batch.begin();
-        batch.draw(background, 0, 0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-
-        batch.draw(ground, 0, 0);
+        batch.draw(background, -backGroundScroll, 0, ground.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(ground, -groundScroll, 0, ground.getWidth(), ground.getHeight());
         batch.end();
     }
 
