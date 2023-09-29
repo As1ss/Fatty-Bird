@@ -28,7 +28,7 @@ public class Main extends ApplicationAdapter {
         backGroundScroll = 0;
         groundScroll = 0;
         background_xSpeed = 30;
-        ground_xSpeed = 160;
+        ground_xSpeed = 180;
         backGround_loop_point = 313;
 
     }
