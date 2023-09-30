@@ -55,6 +55,13 @@ public class Main extends ApplicationAdapter {
         backGroundScroll = (backGroundScroll + background_xSpeed * delta) % backGround_loop_point;
         groundScroll = (groundScroll + ground_xSpeed * delta) % 313;
 
+        bird.update(delta);
+
+        if (Gdx.input.isTouched()){
+            bird.setYSpeed(-10);
+
+        }
+
     }
 
 
@@ -69,7 +76,7 @@ public class Main extends ApplicationAdapter {
         update(delta);
         batch.begin();
         batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
-        batch.draw(ground, -groundScroll, 0, ground.getWidth(), ground.getHeight());
+        batch.draw(ground, -groundScroll, 0, ground.getWidth(), 219);
         batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth(), bird.getHeight());
         batch.end();
     }

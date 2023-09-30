@@ -10,13 +10,24 @@ public class Bird {
     private float y;
     private float height;
     private float width;
+    private float GRAVITY;
+    private float ySpeed;
 
     public Bird() {
         this.texture = new Texture("bird.png");
         this.height = 128;
-        this.width = 128;
+        this.width = 188;
         this.x = Gdx.graphics.getWidth() / 2 - (this.width / 2);
         this.y = Gdx.graphics.getHeight() / 2 - (this.height / 2);
+        this.GRAVITY = 20;
+        this.ySpeed = 0;
+    }
+
+
+    public void update(float delta) {
+        this.ySpeed += GRAVITY * delta;
+        this.y -= this.ySpeed;
+
     }
 
     public Texture getTexture() {
@@ -57,5 +68,13 @@ public class Bird {
 
     public void setWidth(float width) {
         this.width = width;
+    }
+
+    public float getYSpeed() {
+        return this.ySpeed;
+    }
+
+    public void setYSpeed(float newYSpeed) {
+        this.ySpeed = newYSpeed;
     }
 }
