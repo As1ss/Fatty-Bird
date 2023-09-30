@@ -23,19 +23,20 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        background = new Texture("bg_night.png");
+        background = new Texture("background.png");
         ground = new Texture("ground.png");
         backGroundScroll = 0;
         groundScroll = 0;
-        background_xSpeed = 30;
-        ground_xSpeed = 180;
-        backGround_loop_point = 313;
+        background_xSpeed = 60;
+        ground_xSpeed = 200;
+        backGround_loop_point = 2850;
 
     }
 
     public void update(float delta) {
-        backGroundScroll = (backGroundScroll + background_xSpeed * delta) % 313;
-        groundScroll = (groundScroll + ground_xSpeed * delta) % backGround_loop_point;
+        backGroundScroll = (backGroundScroll + background_xSpeed * delta) % backGround_loop_point;
+
+        groundScroll = (groundScroll + ground_xSpeed * delta) % 313;
     }
 
 
@@ -46,7 +47,7 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         update(delta);
         batch.begin();
-        batch.draw(background, -backGroundScroll, 0, ground.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
         batch.draw(ground, -groundScroll, 0, ground.getWidth(), ground.getHeight());
         batch.end();
     }
