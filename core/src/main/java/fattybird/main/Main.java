@@ -29,6 +29,7 @@ public class Main extends ApplicationAdapter {
     private int background_xSpeed;
     private int ground_xSpeed;
     private Bird bird;
+    private Pipe pipe;
 
 
 
@@ -44,6 +45,7 @@ public class Main extends ApplicationAdapter {
         ground_xSpeed = 200;
         backGround_loop_point = 2850;
         bird = new Bird();
+        pipe = new Pipe();
 
 
 
@@ -56,6 +58,7 @@ public class Main extends ApplicationAdapter {
         groundScroll = (groundScroll + ground_xSpeed * delta) % 313;
 
         bird.update(delta);
+        pipe.update(delta);
 
         if (Gdx.input.isTouched()){
             bird.setYSpeed(-10);
@@ -76,8 +79,9 @@ public class Main extends ApplicationAdapter {
         update(delta);
         batch.begin();
         batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
-        batch.draw(ground, -groundScroll, 0, ground.getWidth(), 219);
+        batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
         batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth(), bird.getHeight());
+        batch.draw(pipe.getTexture(),pipe.getX(),220,pipe.getWidth(),pipe.getHeight());
         batch.end();
     }
 
