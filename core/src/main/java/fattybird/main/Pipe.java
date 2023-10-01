@@ -7,6 +7,7 @@ public class Pipe {
     private float height;
     private float width;
     private Texture texture;
+    private Texture reversedTexture = new Texture("reversedPipe.png");
 
     private float x;
     private float y;
@@ -18,13 +19,14 @@ public class Pipe {
         this.width = 250f;
         this.x = Gdx.graphics.getWidth();
         this.y = 0;
-        this.xSpeed = 200f;
+        this.xSpeed = 750f;
 
 
     }
 
     public void update(float Delta) {
         this.x -= this.xSpeed * Delta;
+
 
     }
 
@@ -74,5 +76,13 @@ public class Pipe {
 
     public void setxSpeed(float xSpeed) {
         this.xSpeed = xSpeed;
+    }
+
+    public Texture getReversedTexture() {
+        return reversedTexture;
+    }
+
+    public void setReversedTexture(Texture reversedTexture) {
+        this.reversedTexture = reversedTexture;
     }
 }
