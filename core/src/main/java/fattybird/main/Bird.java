@@ -19,7 +19,7 @@ public class Bird {
         this.width = 188;
         this.x = Gdx.graphics.getWidth() / 2 - (this.width / 2);
         this.y = Gdx.graphics.getHeight() / 2 - (this.height / 2);
-        this.GRAVITY = 20;
+        this.GRAVITY = 30;
         this.ySpeed = 0;
     }
 
