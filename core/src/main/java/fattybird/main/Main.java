@@ -3,8 +3,10 @@ package fattybird.main;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
@@ -35,6 +37,9 @@ public class Main extends ApplicationAdapter {
     private Random rng;
     private float randomPipeHeight;
     private State state;
+    private int score;
+    private BitmapFont flappyFont;
+    private Boolean scoreUP;
 
 
     @Override
@@ -67,6 +72,14 @@ public class Main extends ApplicationAdapter {
 
         state = State.SCROLLING;
 
+        score = 0;
+
+        flappyFont = new BitmapFont(Gdx.files.internal("flappy-bird.fnt"));
+        flappyFont.setColor(Color.WHITE);
+        flappyFont.getData().scale(3);
+
+        scoreUP = false;
+
 
     }
 
@@ -90,10 +103,18 @@ public class Main extends ApplicationAdapter {
             }
         }
 
+        for (Pipe l : pipes) {
+            if (bird.getX() >= l.getX() + l.getWidth() && !scoreUP) {
+                score++;
+                scoreUP = true;
+            }
+        }
 
         if (Gdx.input.isTouched()) {
             bird.setYSpeed(-13);
         }
+
+
 
     }
 
@@ -110,6 +131,7 @@ public class Main extends ApplicationAdapter {
     public void pause() {
 
 
+
     }
 
 
@@ -124,6 +146,7 @@ public class Main extends ApplicationAdapter {
                 newPipe.setX(Gdx.graphics.getWidth() + 300f);
                 newPipe.setHeight(randomPipeHeight);
                 newPipe.setY(220f);
+                scoreUP=false;
                 pipes.add(newPipe);
                 if (i.getX() + i.getWidth() < 0) {
                     pipes.removeValue(i, true);
@@ -143,6 +166,7 @@ public class Main extends ApplicationAdapter {
                 newPipe.setHeight(randomPipeHeight);
                 newPipe.setY(Gdx.graphics.getHeight() - randomPipeHeight);
                 newPipe.setTexture(new Texture("reversedPipe.png"));
+                scoreUP=false;
                 reversedPipes.add(newPipe);
                 if (j.getX() + j.getWidth() < 0) {
                     reversedPipes.removeValue(j, true);
@@ -159,6 +183,7 @@ public class Main extends ApplicationAdapter {
         float delta = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
         switch (state) {
             case SCROLLING:
                 update(delta);
@@ -167,10 +192,12 @@ public class Main extends ApplicationAdapter {
                 pause();
                 break;
         }
-        batch.begin();
+
+
         batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
         batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
         batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth() + 20f, bird.getHeight() + 20f);
+
         for (Pipe i : pipes) {
             batch.draw(i.getTexture(), i.getX(), 220, i.getWidth(), i.getHeight());
 
@@ -179,6 +206,7 @@ public class Main extends ApplicationAdapter {
             batch.draw(j.getTexture(), j.getX(), j.getY(), j.getWidth(), j.getHeight());
         }
 
+        flappyFont.draw(batch, "SCORE: " + String.valueOf(score), 30f, Gdx.graphics.getHeight() - 30f);
         batch.end();
     }
 
@@ -189,6 +217,7 @@ public class Main extends ApplicationAdapter {
         ground.dispose();
         bird.getTexture().dispose();
         pipe.getTexture().dispose();
+        reversedPipe.getTexture().dispose();
 
     }
 }
