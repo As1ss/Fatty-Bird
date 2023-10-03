@@ -1,2 +1,5 @@
-package fattybird.main;public enum State {
+package fattybird.main;
+
+public enum State {
+    SCROLLING,PAUSE
 }

@@ -2,6 +2,7 @@ package fattybird.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Bird {
 
@@ -15,8 +16,8 @@ public class Bird {
 
     public Bird() {
         this.texture = new Texture("bird.png");
-        this.height = 128;
-        this.width = 188;
+        this.height = 108;
+        this.width = 168;
         this.x = Gdx.graphics.getWidth() / 2 - (this.width / 2);
         this.y = Gdx.graphics.getHeight() / 2 - (this.height / 2);
         this.GRAVITY = 30;
@@ -29,6 +30,7 @@ public class Bird {
         this.y -= this.ySpeed;
 
     }
+
 
     public Texture getTexture() {
         return this.texture;

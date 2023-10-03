@@ -2,6 +2,7 @@ package fattybird.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Pipe {
     private float height;
@@ -29,6 +30,7 @@ public class Pipe {
 
 
     }
+
 
     public float getHeight() {
         return height;
