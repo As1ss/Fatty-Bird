@@ -28,7 +28,6 @@ public class Main extends ApplicationAdapter {
     private int background_xSpeed;
     private int ground_xSpeed;
     private Bird bird;
-    //private Pipe pipe;
     private Array<Pipe> pipes;
     private Array<Pipe> reversedPipes;
     private Pipe pipe;
@@ -49,13 +48,20 @@ public class Main extends ApplicationAdapter {
         ground_xSpeed = 750;
         backGround_loop_point = 2850;
         bird = new Bird();
+
         pipe = new Pipe();
+        pipe.setY(220);
+        pipe.setX(Gdx.graphics.getWidth());
+
         reversedPipe = new Pipe();
+        reversedPipe.setY(Gdx.graphics.getHeight() - reversedPipe.getHeight());
+        reversedPipe.setX(Gdx.graphics.getWidth());
+        reversedPipe.setTexture(new Texture("reversedPipe.png"));
 
         pipes = new Array<>();
         reversedPipes = new Array<>();
         pipes.add(pipe);
-        reversedPipes.add(pipe);
+        reversedPipes.add(reversedPipe);
         rng = new Random();
         randomPipeHeight = 0f;
 
@@ -74,16 +80,15 @@ public class Main extends ApplicationAdapter {
         addPipes(delta);
 
         for (Pipe i : pipes) {
-            if (isCollision(bird,i)) {
+            if (isCollision(bird, i)) {
                 state = State.PAUSE;
             }
         }
         for (Pipe j : reversedPipes) {
-            if (isCollision(bird,j)) {
+            if (isCollision(bird, j)) {
                 state = State.PAUSE;
             }
         }
-
 
 
         if (Gdx.input.isTouched()) {
@@ -91,11 +96,12 @@ public class Main extends ApplicationAdapter {
         }
 
     }
-    public boolean isCollision(Bird bird,Pipe pipe){
+
+    public boolean isCollision(Bird bird, Pipe pipe) {
         if (bird.getX() < pipe.getX() + pipe.getWidth() &&
             bird.getX() + bird.getWidth() > pipe.getX() &&
             bird.getY() < pipe.getY() + pipe.getHeight() &&
-            bird.getY() + bird.getHeight() > pipe.getY() ){
+            bird.getY() + bird.getHeight() > pipe.getY()) {
             return true;
         }
         return false;
@@ -164,10 +170,10 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
         batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
-        batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth()+20f, bird.getHeight()+20f);
+        batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth() + 20f, bird.getHeight() + 20f);
         for (Pipe i : pipes) {
             batch.draw(i.getTexture(), i.getX(), 220, i.getWidth(), i.getHeight());
-            //batch.draw(i.getReversedTexture(), i.getX(), Gdx.graphics.getHeight() - i.getHeight(), i.getWidth(), i.getHeight());
+
         }
         for (Pipe j : reversedPipes) {
             batch.draw(j.getTexture(), j.getX(), j.getY(), j.getWidth(), j.getHeight());
