@@ -2,7 +2,6 @@ package fattybird.main;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,9 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Logger;
 
 import java.util.Random;
 
@@ -38,7 +35,9 @@ public class Main extends ApplicationAdapter {
     private float randomPipeHeight;
     private State state;
     private int score;
-    private BitmapFont flappyFont;
+    private BitmapFont bigFont;
+    private BitmapFont middleFont;
+    private BitmapFont littleFont;
     private Boolean scoreUP;
 
 
@@ -74,9 +73,20 @@ public class Main extends ApplicationAdapter {
 
         score = 0;
 
-        flappyFont = new BitmapFont(Gdx.files.internal("flappy-bird.fnt"));
-        flappyFont.setColor(Color.WHITE);
-        flappyFont.getData().scale(3);
+        bigFont = new BitmapFont(Gdx.files.internal("flappy-bird.fnt"));
+        bigFont.setColor(Color.WHITE);
+        bigFont.getData().scale(3);
+
+        middleFont = new BitmapFont(Gdx.files.internal("flappy-bird.fnt"));
+        middleFont.setColor(Color.WHITE);
+        middleFont.getData().scale(2);
+
+        littleFont = new BitmapFont(Gdx.files.internal("flappy-bird.fnt"));
+        littleFont.setColor(Color.WHITE);
+        littleFont.getData().scale(1);
+
+
+
 
         scoreUP = false;
 
@@ -85,6 +95,8 @@ public class Main extends ApplicationAdapter {
 
 
     public void update(float delta) {
+
+
         backGroundScroll = (backGroundScroll + background_xSpeed * delta) % backGround_loop_point;
         groundScroll = (groundScroll + ground_xSpeed * delta) % 313;
 
@@ -94,12 +106,12 @@ public class Main extends ApplicationAdapter {
 
         for (Pipe i : pipes) {
             if (isCollision(bird, i)) {
-                state = State.PAUSE;
+                state = State.GAMEOVER;
             }
         }
         for (Pipe j : reversedPipes) {
             if (isCollision(bird, j)) {
-                state = State.PAUSE;
+                state = State.GAMEOVER;
             }
         }
 
@@ -111,9 +123,8 @@ public class Main extends ApplicationAdapter {
         }
 
         if (Gdx.input.isTouched()) {
-            bird.setYSpeed(-13);
+            bird.setYSpeed(-10);
         }
-
 
 
     }
@@ -128,10 +139,42 @@ public class Main extends ApplicationAdapter {
         return false;
     }
 
-    public void pause() {
+    public void pause(SpriteBatch batch) {
 
+        batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
+        batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
+        batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth() + 20f, bird.getHeight() + 20f);
+        bigFont.draw(batch, "Oops! you failed!", 20f, Gdx.graphics.getHeight() - 400f);
+        middleFont.draw(batch,"Score: "+String.valueOf(score),Gdx.graphics.getWidth()/2-200f,Gdx.graphics.getHeight()-700f);
+        middleFont.draw(batch,"Tap to play again!",130f,Gdx.graphics.getHeight()/2);
+        bird.setY(-3000);
+        if (Gdx.input.isTouched()) {
+            resetPositions();
+            state = State.SCROLLING;
+        }
+    }
 
+    public void resetPositions() {
+        score = 0;
+        bird.setX(Gdx.graphics.getWidth() / 2 - (bird.getWidth() / 2));
+        bird.setY(Gdx.graphics.getHeight() / 2 - (bird.getHeight() / 2));
 
+        pipes.clear(); // Vaciar la lista de pipes
+        reversedPipes.clear(); // Vaciar la lista de reversedPipes
+
+        // Agregar un nuevo objeto Pipe a cada lista
+        Pipe newPipe = new Pipe();
+        newPipe.setX(Gdx.graphics.getWidth() + 300f);
+        newPipe.setHeight(randomPipeHeight);
+        newPipe.setY(220f);
+        pipes.add(newPipe);
+
+        Pipe newReversedPipe = new Pipe();
+        newReversedPipe.setX(Gdx.graphics.getWidth() + 300f);
+        newReversedPipe.setHeight(randomPipeHeight);
+        newReversedPipe.setY(Gdx.graphics.getHeight() - randomPipeHeight);
+        newReversedPipe.setTexture(new Texture("reversedPipe.png"));
+        reversedPipes.add(newReversedPipe);
     }
 
 
@@ -146,7 +189,7 @@ public class Main extends ApplicationAdapter {
                 newPipe.setX(Gdx.graphics.getWidth() + 300f);
                 newPipe.setHeight(randomPipeHeight);
                 newPipe.setY(220f);
-                scoreUP=false;
+                scoreUP = false;
                 pipes.add(newPipe);
                 if (i.getX() + i.getWidth() < 0) {
                     pipes.removeValue(i, true);
@@ -166,7 +209,7 @@ public class Main extends ApplicationAdapter {
                 newPipe.setHeight(randomPipeHeight);
                 newPipe.setY(Gdx.graphics.getHeight() - randomPipeHeight);
                 newPipe.setTexture(new Texture("reversedPipe.png"));
-                scoreUP=false;
+                scoreUP = false;
                 reversedPipes.add(newPipe);
                 if (j.getX() + j.getWidth() < 0) {
                     reversedPipes.removeValue(j, true);
@@ -181,23 +224,30 @@ public class Main extends ApplicationAdapter {
 
 
         float delta = Gdx.graphics.getDeltaTime();
+
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
+
         switch (state) {
             case SCROLLING:
-                update(delta);
+                scrolling(batch);
                 break;
-            case PAUSE:
-                pause();
+            case GAMEOVER:
+                pause(batch);
+
                 break;
         }
 
+        batch.end();
+    }
 
+    private void scrolling(SpriteBatch batch) {
+
+        update(Gdx.graphics.getDeltaTime());
         batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
         batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
         batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth() + 20f, bird.getHeight() + 20f);
-
         for (Pipe i : pipes) {
             batch.draw(i.getTexture(), i.getX(), 220, i.getWidth(), i.getHeight());
 
@@ -205,9 +255,7 @@ public class Main extends ApplicationAdapter {
         for (Pipe j : reversedPipes) {
             batch.draw(j.getTexture(), j.getX(), j.getY(), j.getWidth(), j.getHeight());
         }
-
-        flappyFont.draw(batch, "SCORE: " + String.valueOf(score), 30f, Gdx.graphics.getHeight() - 30f);
-        batch.end();
+        bigFont.draw(batch, "SCORE: " + String.valueOf(score), 30f, Gdx.graphics.getHeight() - 30f);
     }
 
     @Override

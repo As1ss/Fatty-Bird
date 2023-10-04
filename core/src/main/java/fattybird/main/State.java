@@ -1,5 +1,5 @@
 package fattybird.main;
 
 public enum State {
-    SCROLLING,PAUSE
+    INITIAL,SCROLLING,GAMEOVER
 }
