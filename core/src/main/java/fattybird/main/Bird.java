@@ -29,7 +29,9 @@ public class Bird {
         this.ySpeed += GRAVITY * delta;
         this.y -= this.ySpeed;
 
+
     }
+
 
 
     public Texture getTexture() {

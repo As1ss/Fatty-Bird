@@ -2,6 +2,8 @@ package fattybird.main;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Random;
 
@@ -40,6 +43,13 @@ public class Main extends ApplicationAdapter {
     private BitmapFont littleFont;
     private Boolean scoreUP;
     private float countdown;
+    private Sound jumpSound;
+    private Sound hitSound;
+    private Sound loseSound;
+    private Sound scoreSound;
+    private Music marioSoundTrack;
+    private float jumpCooldown ; // Adjust this value as needed
+    private float lastJumpTime ;
 
 
     @Override
@@ -91,6 +101,22 @@ public class Main extends ApplicationAdapter {
 
         countdown = 3.0f;
 
+        hitSound = Gdx.audio.newSound(Gdx.files.internal("explosion.wav"));
+        loseSound = Gdx.audio.newSound(Gdx.files.internal("hurt.wav"));
+        scoreSound = Gdx.audio.newSound(Gdx.files.internal("score.wav"));
+        jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump2.wav"));
+        marioSoundTrack = Gdx.audio.newMusic(Gdx.files.internal("marios_way.mp3"));
+
+
+
+        marioSoundTrack.setLooping(true);
+        marioSoundTrack.play();
+
+
+        jumpCooldown = 0.5f;
+        lastJumpTime = 0;
+
+
 
     }
 
@@ -111,11 +137,15 @@ public class Main extends ApplicationAdapter {
         for (Pipe i : pipes) {
             if (isCollision(bird, i)) {
                 state = State.GAMEOVER;
+                loseSound.play();
+                hitSound.play();
             }
         }
         for (Pipe j : reversedPipes) {
             if (isCollision(bird, j)) {
                 state = State.GAMEOVER;
+                loseSound.play();
+                hitSound.play();
             }
         }
 
@@ -123,12 +153,19 @@ public class Main extends ApplicationAdapter {
             if (bird.getX() >= l.getX() + l.getWidth() && !scoreUP) {
                 score++;
                 scoreUP = true;
+                scoreSound.play();
+            }
+        }
+        if (Gdx.input.isTouched() && state == State.SCROLLING) {
+            // Check if enough time has passed since the last jump
+            float currentTime = TimeUtils.nanoTime() / 0340000000.0f; // Convert to seconds
+            if (currentTime - lastJumpTime >= jumpCooldown) {
+                jumpSound.play();
+                lastJumpTime = currentTime; // Update the last jump time
+                bird.setYSpeed(-10);
             }
         }
 
-        if (Gdx.input.isTouched()) {
-            bird.setYSpeed(-10);
-        }
 
 
     }
@@ -297,6 +334,7 @@ public class Main extends ApplicationAdapter {
             batch.draw(j.getTexture(), j.getX(), j.getY(), j.getWidth(), j.getHeight());
         }
         bigFont.draw(batch, "SCORE: " + String.valueOf(score), 30f, Gdx.graphics.getHeight() - 30f);
+
     }
 
     @Override
@@ -307,6 +345,11 @@ public class Main extends ApplicationAdapter {
         bird.getTexture().dispose();
         pipe.getTexture().dispose();
         reversedPipe.getTexture().dispose();
+        scoreSound.dispose();
+        hitSound.dispose();
+        marioSoundTrack.dispose();
+        loseSound.dispose();
+        jumpSound.dispose();
 
     }
 }
