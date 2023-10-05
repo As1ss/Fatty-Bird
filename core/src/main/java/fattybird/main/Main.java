@@ -86,8 +86,6 @@ public class Main extends ApplicationAdapter {
         littleFont.getData().scale(1);
 
 
-
-
         scoreUP = false;
 
 
@@ -145,8 +143,8 @@ public class Main extends ApplicationAdapter {
         batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
         batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth() + 20f, bird.getHeight() + 20f);
         bigFont.draw(batch, "Oops! you failed!", 20f, Gdx.graphics.getHeight() - 400f);
-        middleFont.draw(batch,"Score: "+String.valueOf(score),Gdx.graphics.getWidth()/2-200f,Gdx.graphics.getHeight()-700f);
-        middleFont.draw(batch,"Tap to play again!",130f,Gdx.graphics.getHeight()/2);
+        middleFont.draw(batch, "Score: " + String.valueOf(score), Gdx.graphics.getWidth() / 2 - 200f, Gdx.graphics.getHeight() - 700f);
+        middleFont.draw(batch, "Tap to play again!", 130f, Gdx.graphics.getHeight() / 2);
         bird.setY(-3000);
         if (Gdx.input.isTouched()) {
             resetPositions();
@@ -223,7 +221,6 @@ public class Main extends ApplicationAdapter {
     public void render() {
 
 
-
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
@@ -250,9 +247,11 @@ public class Main extends ApplicationAdapter {
         batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
         batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
         batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth() + 20f, bird.getHeight() + 20f);
-        middleFont.draw(batch,"TEST HERE TAP TO CONTINUE",20F,Gdx.graphics.getHeight()-700f);
-        if (Gdx.input.isTouched()){
-            state =State.SCROLLING;
+        bigFont.draw(batch, "Fatty Bird", 200f, Gdx.graphics.getHeight() - 600f);
+        littleFont.draw(batch, "Tap to begin!", 350f, Gdx.graphics.getHeight() - 800f);
+        if (Gdx.input.isTouched()) {
+            resetPositions();
+            state = State.SCROLLING;
         }
 
     }
