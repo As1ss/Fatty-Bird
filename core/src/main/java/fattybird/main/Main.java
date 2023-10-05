@@ -69,7 +69,7 @@ public class Main extends ApplicationAdapter {
         rng = new Random();
         randomPipeHeight = 0f;
 
-        state = State.SCROLLING;
+        state = State.INITIAL;
 
         score = 0;
 
@@ -102,7 +102,7 @@ public class Main extends ApplicationAdapter {
 
 
         bird.update(delta);
-        addPipes(delta);
+
 
         for (Pipe i : pipes) {
             if (isCollision(bird, i)) {
@@ -223,13 +223,15 @@ public class Main extends ApplicationAdapter {
     public void render() {
 
 
-        float delta = Gdx.graphics.getDeltaTime();
 
         Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
 
         switch (state) {
+            case INITIAL:
+                initialEvent(batch);
+                break;
             case SCROLLING:
                 scrolling(batch);
                 break;
@@ -242,9 +244,23 @@ public class Main extends ApplicationAdapter {
         batch.end();
     }
 
+    private void initialEvent(SpriteBatch batch) {
+        bird.setY(-3000);
+        update(Gdx.graphics.getDeltaTime());
+        batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
+        batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
+        batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth() + 20f, bird.getHeight() + 20f);
+        middleFont.draw(batch,"TEST HERE TAP TO CONTINUE",20F,Gdx.graphics.getHeight()-700f);
+        if (Gdx.input.isTouched()){
+            state =State.SCROLLING;
+        }
+
+    }
+
     private void scrolling(SpriteBatch batch) {
 
         update(Gdx.graphics.getDeltaTime());
+        addPipes(Gdx.graphics.getDeltaTime());
         batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
         batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
         batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth() + 20f, bird.getHeight() + 20f);
