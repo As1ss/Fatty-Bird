@@ -39,6 +39,7 @@ public class Main extends ApplicationAdapter {
     private BitmapFont middleFont;
     private BitmapFont littleFont;
     private Boolean scoreUP;
+    private float countdown;
 
 
     @Override
@@ -88,6 +89,8 @@ public class Main extends ApplicationAdapter {
 
         scoreUP = false;
 
+        countdown = 3.0f;
+
 
     }
 
@@ -98,8 +101,11 @@ public class Main extends ApplicationAdapter {
         backGroundScroll = (backGroundScroll + background_xSpeed * delta) % backGround_loop_point;
         groundScroll = (groundScroll + ground_xSpeed * delta) % 313;
 
+        if (state==State.SCROLLING){
+            bird.update(delta);
+        }
 
-        bird.update(delta);
+
 
 
         for (Pipe i : pipes) {
@@ -229,6 +235,9 @@ public class Main extends ApplicationAdapter {
             case INITIAL:
                 initialEvent(batch);
                 break;
+            case COUNTDOWN:
+                countDownEvent(batch);
+                break;
             case SCROLLING:
                 scrolling(batch);
                 break;
@@ -241,6 +250,24 @@ public class Main extends ApplicationAdapter {
         batch.end();
     }
 
+    private void countDownEvent(SpriteBatch batch) {
+        countdown -= Gdx.graphics.getDeltaTime();
+
+        update(Gdx.graphics.getDeltaTime());
+        batch.draw(background, -backGroundScroll, 0, 8000, Gdx.graphics.getHeight());
+        batch.draw(ground, -groundScroll, 0, ground.getWidth(), 220);
+        batch.draw(bird.getTexture(), bird.getX(), bird.getY(), bird.getWidth() + 20f, bird.getHeight() + 20f);
+        bigFont.draw(batch, String.format("%.0f", countdown), Gdx.graphics.getWidth() / 2 - 50f, Gdx.graphics.getHeight() / 2);
+
+        // Check if the countdown has reached 0 or below
+        if (countdown <= 0) {
+            resetPositions();
+            countdown = 0;
+            state = State.SCROLLING;
+
+        }
+    }
+
     private void initialEvent(SpriteBatch batch) {
         bird.setY(-3000);
         update(Gdx.graphics.getDeltaTime());
@@ -250,8 +277,7 @@ public class Main extends ApplicationAdapter {
         bigFont.draw(batch, "Fatty Bird", 200f, Gdx.graphics.getHeight() - 600f);
         littleFont.draw(batch, "Tap to begin!", 350f, Gdx.graphics.getHeight() - 800f);
         if (Gdx.input.isTouched()) {
-            resetPositions();
-            state = State.SCROLLING;
+            state = State.COUNTDOWN;
         }
 
     }

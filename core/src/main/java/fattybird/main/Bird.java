@@ -79,4 +79,8 @@ public class Bird {
     public void setYSpeed(float newYSpeed) {
         this.ySpeed = newYSpeed;
     }
+
+    public void setGRAVITY(float newGravity) {
+        this.GRAVITY = newGravity;
+    }
 }
